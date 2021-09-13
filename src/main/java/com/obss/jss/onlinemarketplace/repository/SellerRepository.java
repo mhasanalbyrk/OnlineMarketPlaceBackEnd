@@ -4,7 +4,9 @@ import com.obss.jss.onlinemarketplace.model.Seller;
 import com.obss.jss.onlinemarketplace.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface SellerRepository extends JpaRepository<Seller, Long>, JpaSpecificationExecutor<Seller> {
     boolean existsByUsername(String username);
 

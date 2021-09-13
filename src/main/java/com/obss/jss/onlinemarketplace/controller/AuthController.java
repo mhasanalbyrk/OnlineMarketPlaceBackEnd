@@ -2,13 +2,15 @@ package com.obss.jss.onlinemarketplace.controller;
 
 import com.obss.jss.onlinemarketplace.dto.JwtResponse;
 import com.obss.jss.onlinemarketplace.dto.LoginRequest;
-import com.obss.jss.onlinemarketplace.dto.SignupRequest;
 import com.obss.jss.onlinemarketplace.dto.MessageResponse;
+import com.obss.jss.onlinemarketplace.dto.SignupRequest;
+import com.obss.jss.onlinemarketplace.model.Mail;
 import com.obss.jss.onlinemarketplace.model.Role;
 import com.obss.jss.onlinemarketplace.model.User;
 import com.obss.jss.onlinemarketplace.security.JwtUtils;
 import com.obss.jss.onlinemarketplace.security.MyUserDetails;
 import com.obss.jss.onlinemarketplace.service.RoleService;
+import com.obss.jss.onlinemarketplace.service.SendMailService;
 import com.obss.jss.onlinemarketplace.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,8 +47,12 @@ public class AuthController {
     private final RoleService roleService;
 
     private final PasswordEncoder encoder;
+    private final SendMailService mailService;
 
     private final JwtUtils jwtUtils;
+
+
+//    private final EmailController;
 
     @PostMapping("/signin")
     public JwtResponse authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -55,7 +61,7 @@ public class AuthController {
                 loginRequest.getPassword()));
         User user = userService.findByUsername(loginRequest.getUsername());
         Role[] roless = new Role[1];
-        String role =user.getRoles().toArray(roless)[0].getName();
+        String role = user.getRoles().toArray(roless)[0].getName();
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication, role);
@@ -118,6 +124,12 @@ public class AuthController {
 
         user.setRoles(roles);
         userService.createNewUser(user);
+        Mail signupMail = Mail.builder()
+                .recipient(signUpRequest.getEmail())
+                .subject("Welcome!!")
+                .message(signUpRequest.getUsername() + ", You have  succesfully" +
+                        " registered your account").build();
+        mailService.sendMail(signupMail);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }

@@ -3,9 +3,8 @@ services:
   mysql-standalone:
     image: 'mysql:5.7'
     environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_PASSWORD=root
-      - MYSQL_DATABASE=demo
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=online_marketplace
     ports:
       - "3306:3306"
   springboot-docker-container:
@@ -13,9 +12,9 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-standalone:3306/demo?autoReconnect=true&useSSL=false
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-standalone:3306/online_marketplace?autoReconnect=true&useSSL=false
       SPRING_DATASOURCE_USERNAME: "root"
-      SPRING_DATASOURCE_PASSWORD: "root"
+      SPRING_DATASOURCE_PASSWORD: "password"
     build:
       context: "./"
       dockerfile: "DockerFile"
